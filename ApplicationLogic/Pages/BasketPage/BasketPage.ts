@@ -38,7 +38,7 @@ export class BasketPage extends BasePage {
 
     async ClickOnBasketIcon() {
         await this.Elements.BasketIcon.click();
-        await this.DropdownElements.DropdownBasket.waitFor()
+        await this.DropdownElements.DropdownBasket.waitFor();
     };
 
     async CleanBasket() {
@@ -48,7 +48,7 @@ export class BasketPage extends BasePage {
             await this.AddItemToBasket(await this.Buttons.BuyItem(this.Elements.NonDiscountItem), 1, 10);
             await this.OpenBasketDropdownAndClean();
         } else if (counterValue !== "0") {
-            await this.OpenBasketDropdownAndClean()
+            await this.OpenBasketDropdownAndClean();
         };
     };
 

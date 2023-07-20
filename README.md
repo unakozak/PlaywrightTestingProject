@@ -64,4 +64,4 @@
 | В окне корзины нажать кнопку перейти в корзину | Переход на страницу корзины|
 
 ## Allure Reporter
-![Allure](TestsData\Allure01.png)
+<img src="TestsData\Allure01.png" alt="Allure report" />
