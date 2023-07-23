@@ -13,15 +13,18 @@ export class BasketPage extends BasePage {
     };
 
     Elements = {
+        BasketLink: this.Containers.HeaderContainer.locator('#dropdownBasket'),
         BasketIcon: this.Containers.HeaderContainer.locator('[class*= "basket_icon"]'),
         Counter: this.Containers.HeaderContainer.locator('.basket-count-items'),
         DiscountItem: this.page.locator('.hasDiscount'),
         NonDiscountItem: this.page.locator('.note-item:not(.hasDiscount)'),
+        ItemName: (container) => container.locator('.product_name'),
+        ItemPrice: (container) => container.locator('.product_price')
     };
 
     DropdownElements = {
         DropdownBasket: this.page.locator('[aria-labelledby="dropdownBasket"]'),
-        BasketItemTitle: this.page.locator('.basket-item-title'),
+        BasketItemName: this.page.locator('.basket-item-title'),
         BasketItemPrice: this.page.locator('.basket-item-price'),
         BasketPrice: this.page.locator('.basket_price'),
     };
@@ -29,11 +32,11 @@ export class BasketPage extends BasePage {
     Buttons = {
         OpenBasketButton: this.DropdownElements.DropdownBasket.locator(".btn-primary"),
         CleanBasket: this.DropdownElements.DropdownBasket.locator(".btn-danger"),
-        BuyItem: (container) => container.locator('[class*="actionBuyProduct"]'),
+        BuyItemButton: (container) => container.locator('[class*="actionBuyProduct"]'),
     };
 
-    async OpenBasket() {
-        await this.Buttons.OpenBasketButton.click();
+    TextBox = {
+        ItemsBuyCount: (container) => container.locator('.form-control'),
     };
 
     async ClickOnBasketIcon() {
@@ -41,15 +44,9 @@ export class BasketPage extends BasePage {
         await this.DropdownElements.DropdownBasket.waitFor();
     };
 
-    async CleanBasket() {
-        await this.Elements.Counter.waitFor();
-        const counterValue = await this.Elements.Counter.textContent();
-        if (counterValue === "9") {
-            await this.AddItemToBasket(await this.Buttons.BuyItem(this.Elements.NonDiscountItem), 1, 10);
-            await this.OpenBasketDropdownAndClean();
-        } else if (counterValue !== "0") {
-            await this.OpenBasketDropdownAndClean();
-        };
+    async ClickOnBasketLink() {
+        await this.Elements.BasketLink.click();
+        await this.DropdownElements.DropdownBasket.waitFor();
     };
 
     async OpenBasketDropdownAndClean() {
@@ -59,9 +56,9 @@ export class BasketPage extends BasePage {
     };
 
     async AddItemToBasket(item, incrementNumber: number, targetItemsCount: number, itemIndex = 1) {
-        for (let i = 0; i < incrementNumber; i++) {
-            await item.nth(itemIndex).click();
-        };
+        await this.TextBox.ItemsBuyCount(item.nth(itemIndex)).waitFor();
+        await this.TextBox.ItemsBuyCount(item.nth(itemIndex)).fill(`${incrementNumber}`);
+        await this.Buttons.BuyItemButton(item.nth(itemIndex)).click();
         await this.page.waitForSelector(`${this.Elements.Counter.toString().replace(/Locator@/g, '')}:has-text("${targetItemsCount}")`);
     };
 };
