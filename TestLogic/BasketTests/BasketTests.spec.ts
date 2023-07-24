@@ -26,19 +26,16 @@ test.describe('Basket Tests', async () => {
     test("TC02. Open a basket with 1 non-sale item. Basket page opened and URL have /basket", async ({ page, baseURL }) => {
         const pageManager = new PageManager(page);
         const item = pageManager.basketPage.Elements.NonDiscountItem;
-        const numberOfItemsToBasket = 1;
         const itemID = 1;
         const itemName = await (pageManager.basketPage.Elements.ItemName(item.nth(itemID))).textContent();
         const itemPrice = await (pageManager.basketPage.Elements.ItemPrice(item.nth(itemID))).textContent();
-        await pageManager.basketPage.AddItemToBasket(item, numberOfItemsToBasket, numberOfItemsToBasket, itemID);
+        await pageManager.basketPage.AddItemToBasket(item, itemID, itemID);
         await pageManager.basketPage.ClickOnBasketIcon();
-
         const basketItemPrice = await pageManager.basketPage.DropdownElements.BasketItemPrice.textContent();
         const basketPrice = await pageManager.basketPage.DropdownElements.BasketPrice.textContent();
         await expect(await pageManager.basketPage.DropdownElements.BasketItemName.textContent()).toEqual(itemName);
         await expect((basketItemPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
         await expect((basketPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
-
         await ExpectOpenBasket({ pageManager, baseURL });
     });
 
@@ -46,19 +43,16 @@ test.describe('Basket Tests', async () => {
         // Issue #02. After adding discount item basket icon in header disappears 
         const pageManager = new PageManager(page);
         const item = pageManager.basketPage.Elements.DiscountItem;
-        const numberOfItemsToBasket = 1;
         const itemID = 1;
         const itemName = await (pageManager.basketPage.Elements.ItemName(item.nth(itemID))).textContent();
         const itemPrice = await (pageManager.basketPage.Elements.ItemPrice(item.nth(itemID))).textContent();
-        await pageManager.basketPage.AddItemToBasket(item, numberOfItemsToBasket, numberOfItemsToBasket, itemID);
+        await pageManager.basketPage.AddItemToBasket(item, itemID, itemID);
         await pageManager.basketPage.ClickOnBasketIcon();
-
         const basketItemPrice = await pageManager.basketPage.DropdownElements.BasketItemPrice.textContent();
         const basketPrice = await pageManager.basketPage.DropdownElements.BasketPrice.textContent();
         await expect(await pageManager.basketPage.DropdownElements.BasketItemName.textContent()).toEqual(itemName);
         await expect((basketItemPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
         await expect((basketPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
-
         await ExpectOpenBasket({ pageManager, baseURL });
     });
 
@@ -66,36 +60,30 @@ test.describe('Basket Tests', async () => {
         // Issue #02. After adding discount item basket icon in header disappears 
         const pageManager = new PageManager(page);
         const item = pageManager.basketPage.Elements.DiscountItem
-        const numberOfItemsToBasket = 1;
         const itemID = 1;
         const itemName = await (pageManager.basketPage.Elements.ItemName(item.nth(itemID))).textContent();
         const itemPrice = await (pageManager.basketPage.Elements.ItemPrice(item.nth(itemID))).textContent();
-        await pageManager.basketPage.AddItemToBasket(item, numberOfItemsToBasket, numberOfItemsToBasket, itemID);
+        await pageManager.basketPage.AddItemToBasket(item, itemID, itemID);
         await pageManager.basketPage.ClickOnBasketLink();
-
         const basketItemPrice = await pageManager.basketPage.DropdownElements.BasketItemPrice.textContent();
         const basketPrice = await pageManager.basketPage.DropdownElements.BasketPrice.textContent();
         await expect(await pageManager.basketPage.DropdownElements.BasketItemName.textContent()).toEqual(itemName);
         await expect((basketItemPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
         await expect((basketPrice.match(numberPattern))[0]).toEqual((itemPrice.match(numberPattern))[0]);
-
         await ExpectOpenBasket({ pageManager, baseURL });
     });
 
     test("TC04. Open a basket with 9 different products. Basket page opened and URL have /basket.", async ({ page, baseURL }) => {
         // Issue #02. After adding discount item basket icon in header disappears 
         const pageManager = new PageManager(page);
-        const numberOfItemsToBasket = 1;
-        const itemID = 0;
+        const itemID = 1;
         const item = pageManager.basketPage.Elements.NonDiscountItem;
-
         let itemNames: string[] = new Array();
         let basketItemNames: string[] = new Array();
         let itemPrice = await (pageManager.basketPage.Elements.ItemPrice(item.nth(0))).textContent();
         let itemName = "";
         let sum = parseInt((itemPrice.match(numberPattern))[0], 10);
-
-        await pageManager.basketPage.AddItemToBasket(item, numberOfItemsToBasket, numberOfItemsToBasket, itemID);
+        await pageManager.basketPage.AddItemToBasket(item, itemID, itemID, 0);
 
         for (let i = 0; i < 8; i++) {
             await pageManager.basketPage.AddItemToBasket(pageManager.basketPage.Containers.ItemsContainer, itemID, 2 + i, i);
@@ -104,10 +92,13 @@ test.describe('Basket Tests', async () => {
             sum = parseInt((itemPrice.match(numberPattern))[0], 10) + sum;
             itemNames.push(itemName);
         };
+
         await pageManager.basketPage.ClickOnBasketIcon();
+
         for (let i = 0; i < 8; i++) {
             basketItemNames.push(await pageManager.basketPage.DropdownElements.BasketItemName.nth(i).textContent());
         };
+
         const basketPrice = await pageManager.basketPage.DropdownElements.BasketPrice.textContent();
         await expect(parseInt((basketPrice.match(numberPattern))[0], 10)).toEqual(sum);
         await expect(basketItemNames.sort()).toStrictEqual(itemNames.sort());
@@ -122,7 +113,6 @@ test.describe('Basket Tests', async () => {
         const numberOfItemsToBasket = 9;
         const itemName = await (pageManager.basketPage.Elements.ItemName(item.nth(itemID))).textContent();
         const itemPrice = await (pageManager.basketPage.Elements.ItemPrice(item.nth(itemID))).textContent();
-
         await pageManager.basketPage.AddItemToBasket(item, numberOfItemsToBasket, numberOfItemsToBasket, itemID);
         await pageManager.basketPage.ClickOnBasketIcon();
         const basketPrice = await pageManager.basketPage.DropdownElements.BasketPrice.textContent();
@@ -137,10 +127,9 @@ test.describe('Basket Tests', async () => {
         await expect(pageManager.page, 'Basket page opened and URL have /basket').toHaveURL(`${baseURL}/basket`);
     };
 
-
     async function CleanBasket(page) {
         const pageManager = new PageManager(page);
-        await pageManager.basketPage.Elements.Counter.waitFor()
+        await pageManager.basketPage.Elements.Counter.waitFor();
         const counterValue = await pageManager.basketPage.Elements.Counter.textContent();
         //Issue #03. After adding 9 elements to basket, and click on basket icon dropodrown doesn't appear and it redirects to basket page. 
         if (counterValue === "9") {

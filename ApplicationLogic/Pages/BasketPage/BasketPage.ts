@@ -19,7 +19,7 @@ export class BasketPage extends BasePage {
         DiscountItem: this.page.locator('.hasDiscount'),
         NonDiscountItem: this.page.locator('.note-item:not(.hasDiscount)'),
         ItemName: (container) => container.locator('.product_name'),
-        ItemPrice: (container) => container.locator('.product_price')
+        ItemPrice: (container) => container.locator('.product_price'),
     };
 
     DropdownElements = {
