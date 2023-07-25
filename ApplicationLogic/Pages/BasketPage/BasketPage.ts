@@ -50,15 +50,15 @@ export class BasketPage extends BasePage {
     };
 
     async OpenBasketDropdownAndClean() {
-        await this.Elements.BasketIcon.click();
+        await this.Elements.BasketLink.click();
         await this.Buttons.CleanBasket.click();
-        await this.page.waitForSelector(`${this.Elements.Counter.toString().replace(/Locator@/g, '')}:has-text("0")`);
+        await this.page.locator(`${this.Elements.Counter.toString().replace(/Locator@/g, '')}:has-text("0")`).waitFor();
     };
 
     async AddItemToBasket(item, incrementNumber: number, targetItemsCount: number, itemIndex = 1) {
         await this.TextBox.ItemsBuyCount(item.nth(itemIndex)).waitFor();
         await this.TextBox.ItemsBuyCount(item.nth(itemIndex)).fill(`${incrementNumber}`);
         await this.Buttons.BuyItemButton(item.nth(itemIndex)).click();
-        await this.page.waitForSelector(`${this.Elements.Counter.toString().replace(/Locator@/g, '')}:has-text("${targetItemsCount}")`);
+        await this.page.locator(`${this.Elements.Counter.toString().replace(/Locator@/g, '')}:has-text("${targetItemsCount}")`).waitFor();
     };
 };

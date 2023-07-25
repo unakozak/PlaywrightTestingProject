@@ -133,10 +133,12 @@ test.describe('Basket Tests', async () => {
         const counterValue = await pageManager.basketPage.Elements.Counter.textContent();
         //Issue #03. After adding 9 elements to basket, and click on basket icon dropodrown doesn't appear and it redirects to basket page. 
         if (counterValue === "9") {
-            await pageManager.basketPage.AddItemToBasket(pageManager.basketPage.Containers.ItemsContainer, 1, 10, 4);
+            await pageManager.basketPage.AddItemToBasket(pageManager.basketPage.Containers.ItemsContainer, 1, 10, 5);
             await pageManager.basketPage.OpenBasketDropdownAndClean();
+            await expect(await pageManager.basketPage.Elements.Counter).toHaveText("0");
         } else if (counterValue !== "0") {
             await pageManager.basketPage.OpenBasketDropdownAndClean();
+            await expect(await pageManager.basketPage.Elements.Counter).toHaveText("0");
         };
     };
 });
